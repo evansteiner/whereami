@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Where Am I?</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    #city {
+      font-size: 2em;
+      margin: 20px 0;
+    }
+    iframe {
+      width: 100%;
+      max-width: 800px;
+      height: 450px;
+      border: none;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Finding your city...</h1>
+  <div id="city"></div>
+  <div id="map-container"></div>
+
+  <script>
+    function showError(error) {
+      const cityDiv = document.getElementById('city');
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          cityDiv.innerText = "Location permission denied.";
+          break;
+        case error.POSITION_UNAVAILABLE:
+          cityDiv.innerText = "Location unavailable.";
+          break;
+        case error.TIMEOUT:
+          cityDiv.innerText = "Location request timed out.";
+          break;
+        default:
+          cityDiv.innerText = "An unknown error occurred.";
+          break;
+      }
+    }
+
+    function fetchCity(latitude, longitude) {
+      const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
+
+      fetch(url, { headers: { 'User-Agent': 'city-finder-app' } })
+        .then(response => response.json())
+        .then(data => {
+          const city = data.address.city || data.address.town || data.address.village || data.address.municipality || "Unknown location";
+          document.querySelector("h1").innerText = "You're in:";
+          document.getElementById("city").innerText = city;
+
+          const mapIframe = document.createElement("iframe");
+          mapIframe.src = `https://maps.google.com/maps?q=${latitude},${longitude}&z=13&output=embed`;
+          document.getElementById("map-container").appendChild(mapIframe);
+        })
+        .catch(() => {
+          document.getElementById("city").innerText = "Unable to retrieve city.";
+        });
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          fetchCity(position.coords.latitude, position.coords.longitude);
+        },
+        showError
+      );
+    } else {
+      document.getElementById("city").innerText = "Geolocation not supported.";
+    }
+  </script>
+</body>
+</html>
