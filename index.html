@@ -186,5 +186,20 @@
       document.getElementById("spinner-container").style.display = "none";
     }
   </script>
+
+    <footer style="font-size: 0.9em; text-align: center; color: #777; padding-bottom: 30px;">
+    <p>&copy; <span id="year"></span>, Evan Steiner</p>
+    <p>
+      Copyright of underlying code subject to terms available at
+      <a href="https://github.com/evansteiner/whereami" target="_blank">github.com/evansteiner/whereami</a>
+    </p>
+    <p>Contact: <a href="mailto:evan.d.steiner@gmail.com">evan.d.steiner@gmail.com</a></p>
+  </footer>
+
+  <script>
+    // Set current year dynamically
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+
 </body>
 </html>
