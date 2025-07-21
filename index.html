@@ -79,6 +79,21 @@
     #spinner-container {
       display: block;
     }
+
+    footer {
+      max-width: 900px;
+      padding: 40px 20px;
+      margin: 30px auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      font-size: 1em;
+      line-height: 1.6em;
+    }
+
+    footer h2 {
+      margin-top: 0;
+    }
   </style>
 </head>
 <body>
@@ -91,6 +106,26 @@
     <div id="address"></div>
     <div id="map-container"></div>
   </main>
+  <footer>
+    <h2>What is this?</h2>
+    <p>A lightweight app that uses your device’s location and public APIs to instantly tell you what city you're in.</p>
+
+    <h2>Why build this?</h2>
+    <p>Navigation apps are great at directions, but not always helpful when you're simply curious about where you are. While driving through interesting neighborhoods or landmarks, I often wondered, “What city is this?”—and found no easy answer. This app is a simple “push button, get city name” tool built to satisfy that curiosity.</p>
+
+    <h2>What APIs does it use?</h2>
+    <ul>
+      <li>Your device’s GPS for latitude and longitude</li>
+      <li>OpenStreetMap.org for converting coordinates to a readable address</li>
+      <li>Google Maps for displaying maps</li>
+    </ul>
+
+    <h2>What makes it special?</h2>
+    <p>It’s intentionally minimal—just HTML, CSS, and JavaScript. All API calls are free and unauthenticated. We don’t track or store anything. It’s real-time info, on demand.</p>
+
+    <h2>Disclaimer:</h2>
+    <p>This is a hobby MVP project with no guarantees of uptime or accuracy.</p>
+  </footer>
 
   <script>
     function showError(error) {
