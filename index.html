@@ -11,7 +11,12 @@
     }
     #city {
       font-size: 2em;
-      margin: 20px 0;
+      margin: 20px 0 10px;
+    }
+    #address {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+      color: #444;
     }
     iframe {
       width: 100%;
@@ -23,8 +28,9 @@
   </style>
 </head>
 <body>
-  <h1>Finding your city...</h1>
+  <h1>Finding your location...</h1>
   <div id="city"></div>
+  <div id="address"></div>
   <div id="map-container"></div>
 
   <script>
@@ -46,29 +52,32 @@
       }
     }
 
-    function fetchCity(latitude, longitude) {
+    function fetchLocationData(latitude, longitude) {
       const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
 
       fetch(url, { headers: { 'User-Agent': 'city-finder-app' } })
         .then(response => response.json())
         .then(data => {
+          const address = data.display_name;
           const city = data.address.city || data.address.town || data.address.village || data.address.municipality || "Unknown location";
+
           document.querySelector("h1").innerText = "You're in:";
           document.getElementById("city").innerText = city;
+          document.getElementById("address").innerText = "Approximate Address:" + address;
 
           const mapIframe = document.createElement("iframe");
           mapIframe.src = `https://maps.google.com/maps?q=${latitude},${longitude}&z=13&output=embed`;
           document.getElementById("map-container").appendChild(mapIframe);
         })
         .catch(() => {
-          document.getElementById("city").innerText = "Unable to retrieve city.";
+          document.getElementById("city").innerText = "Unable to retrieve location data.";
         });
     }
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         position => {
-          fetchCity(position.coords.latitude, position.coords.longitude);
+          fetchLocationData(position.coords.latitude, position.coords.longitude);
         },
         showError
       );
