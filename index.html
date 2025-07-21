@@ -9,15 +9,18 @@
       text-align: center;
       padding: 40px 20px;
     }
+
     #city {
       font-size: 2em;
       margin: 20px 0 10px;
     }
+
     #address {
       font-size: 1.2em;
       margin-bottom: 30px;
       color: #444;
     }
+
     iframe {
       width: 100%;
       max-width: 800px;
@@ -25,16 +28,38 @@
       border: none;
       margin: 0 auto;
     }
+
+    /* Spinner styles */
+    .spinner {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #555;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #spinner-container {
+      display: block;
+    }
   </style>
 </head>
 <body>
   <h1>Finding your location...</h1>
+  <div id="spinner-container"><div class="spinner"></div></div> <!-- Spinner container -->
   <div id="city"></div>
   <div id="address"></div>
   <div id="map-container"></div>
 
   <script>
     function showError(error) {
+      document.getElementById('spinner-container').style.display = 'none';
       const cityDiv = document.getElementById('city');
       switch (error.code) {
         case error.PERMISSION_DENIED:
@@ -63,13 +88,17 @@
 
           document.querySelector("h1").innerText = "You're in:";
           document.getElementById("city").innerText = city;
-          document.getElementById("address").innerText = "Approximate Address:" + address;
+          document.getElementById("address").innerText = "Approximate Address: " + address;
 
           const mapIframe = document.createElement("iframe");
           mapIframe.src = `https://maps.google.com/maps?q=${latitude},${longitude}&z=13&output=embed`;
           document.getElementById("map-container").appendChild(mapIframe);
+
+          // Hide spinner
+          document.getElementById("spinner-container").style.display = "none";
         })
         .catch(() => {
+          document.getElementById("spinner-container").style.display = "none";
           document.getElementById("city").innerText = "Unable to retrieve location data.";
         });
     }
@@ -83,6 +112,7 @@
       );
     } else {
       document.getElementById("city").innerText = "Geolocation not supported.";
+      document.getElementById("spinner-container").style.display = "none";
     }
   </script>
 </body>
