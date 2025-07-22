@@ -18,14 +18,29 @@
       min-height: 100vh;
     }
 
-    header {
-      background-color: #4a90e2;
-      width: 100%;
-      padding: 30px 0;
-      text-align: center;
-      color: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
+header {
+  background: linear-gradient(135deg, #4a90e2, #357ABD);
+  width: 100%;
+  padding: 30px 20px;
+  text-align: center;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+header img {
+  height: 60px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2.2em;
+}
+
 
     h1 {
       margin: 0;
@@ -115,8 +130,10 @@
 </head>
 <body>
   <header>
+    <img src="images/cb_location_logo.png" alt="Where Am I Logo">
     <h1>Finding your location...</h1>
   </header>
+
   <main>
     <div id="spinner-container"><div class="spinner"></div></div>
     <div id="city"></div>
