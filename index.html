@@ -161,7 +161,7 @@ header h1 {
     <ul>
       <li>This app relies on location access from your device, and there can be all kinds of reasons your device blocks that access which I'm not interested in troubleshooting for an MVP. If you're on mobile and getting a "Location permission denied" error, one place to start is to ensure you have GPS turned on.</li>
       <li>It hasn't been rigorously tested for browser compatability. I primarily code against Chrome on both desktop and mobile (Android) for MVP projects, so it should <i>probably</i> work in those environments, but anything else is 50/50.</li>
-      <li>As an MVP project, I don't routinely maintain compatability updates, even against Chrome. Check the "last update" note in the footer to get a sense of when I think this was last working. If it's been more than a few months, it's entirely possible the ecosystem changed and something is broken.</li>
+      <li>As an MVP project, I don't routinely maintain compatability updates, even against Chrome. Check the "Last Updated" note in the footer to get a sense of when I think this was last working. If it's been more than a few months, it's entirely possible the ecosystem changed and something is broken.</li>
       <li>The <a href="https://github.com/evansteiner/whereami" target="_blank">repo</a> for this project is open source and fully available, so feel free to suggest pull requests if you want to suggest an improvement or fix compatability. I can't gurentee how often I'll review PRs.</li>
       <li>The code is, admittedly, progressive slop. No apologies for inefficiencies.</li>
       <li>This is a hobby MVP project with no guarantees of uptime, accuracy, or performance.</li>
@@ -235,12 +235,32 @@ header h1 {
       Copyright of underlying code subject to terms available at
       <a href="https://github.com/evansteiner/whereami" target="_blank">github.com/evansteiner/whereami</a>
     </p>
+
+    <p id="last-updated">Last updated: ...</p>
+
     <p>Contact: <a href="mailto:evan.d.steiner@gmail.com">evan.d.steiner@gmail.com</a></p>
   </footer>
 
   <script>
     // Set current year dynamically
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Fetch latest commit date from GitHub
+    fetch('https://api.github.com/repos/evansteiner/whereami/commits')
+      .then(response => response.json())
+      .then(data => {
+        const lastCommitDate = new Date(data[0].commit.committer.date);
+        const formattedDate = lastCommitDate.toLocaleDateString(undefined, {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+        document.getElementById('last-updated').textContent = `Last updated: ${formattedDate}`;
+      })
+      .catch(error => {
+        console.error('Failed to fetch latest commit:', error);
+        document.getElementById('last-updated').textContent = 'Last updated: unknown';
+      });
   </script>
 
 </body>
