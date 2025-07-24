@@ -145,7 +145,7 @@ header h1 {
     <p>A lightweight app that uses your device’s location and public APIs to instantly tell you what city you're in.</p>
 
     <h2>Why build this?</h2>
-    <p>Navigation apps are great at directions, but not always helpful when you're simply curious about where you are. While driving through interesting neighborhoods or landmarks, I often wondered, “What city is this?”—and found no easy answer. This app is a simple “push button, get city name” tool built to satisfy that curiosity.</p>
+    <p>Sometimes I'm driving from point X to Y, and along the way I see something interesting and wonder, "What city am I even in right now?" Navigation apps are great at directions between X and Y, but I've found them less helpful at quickly identifying the exact city I'm currently in while en route, and I wanted to build a simple simple "push button, get city" tool to satisfy that curiosity. I'm sure other apps do this, but I wanted to try my own solution.</p>
 
     <h2>What APIs does it use?</h2>
     <ul>
@@ -155,11 +155,17 @@ header h1 {
     </ul>
 
     <h2>What makes it special?</h2>
-    <p>It’s intentionally minimal—just HTML, CSS, and JavaScript. All API calls are free and unauthenticated. We don’t track or store anything. It’s real-time info, on demand.</p>
+    <p>I don't think it is particularly "special", but:</p>
+      <ul>
+        <li>It’s intentionally minimal - just HTML, CSS, and JavaScript.</li>
+        <li>All API calls are free and unauthenticated.</li>
+        <li>We don’t track or store anything. It’s real-time info, on demand.</li>
+      </ul>
 
     <h2>This is a very MVP build, meaning:</h2>
     <ul>
       <li>This app relies on location access from your device, and there can be all kinds of reasons your device blocks that access which I'm not interested in troubleshooting for an MVP. If you're on mobile and getting a "Location permission denied" error, one place to start is to ensure you have GPS turned on.</li>
+      <li>Is it loading slow for you? Yeah, it's free APIs patched together. Somtimes it's slow.</li>
       <li>It hasn't been rigorously tested for browser compatability. I primarily code against Chrome on both desktop and mobile (Android) for MVP projects, so it should <i>probably</i> work in those environments, but anything else is 50/50.</li>
       <li>As an MVP project, I don't routinely maintain compatability updates, even against Chrome. Check the "Last Updated" note in the footer to get a sense of when I think this was last working. If it's been more than a few months, it's entirely possible the ecosystem changed and something is broken.</li>
       <li>The <a href="https://github.com/evansteiner/whereami" target="_blank">repo</a> for this project is open source and fully available, so feel free to suggest pull requests if you want to suggest an improvement or fix compatability. I can't gurentee how often I'll review PRs.</li>
