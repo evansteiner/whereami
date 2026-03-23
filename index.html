@@ -1,269 +1,738 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Where Am I?</title>
+  <meta name="theme-color" content="#2563b8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Where Am I?">
   <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="images/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="images/icon-512.png">
+  <link rel="manifest" href="manifest.webmanifest">
   <style>
+    :root {
+      --bg-top: #eef5ff;
+      --bg-bottom: #f8fbff;
+      --surface: rgba(255, 255, 255, 0.92);
+      --surface-strong: #ffffff;
+      --text: #0f2744;
+      --muted: #53657d;
+      --line: rgba(24, 72, 132, 0.14);
+      --blue: #2563b8;
+      --blue-deep: #163d75;
+      --red: #c73b4a;
+      --red-soft: rgba(199, 59, 74, 0.1);
+      --blue-soft: rgba(37, 99, 184, 0.1);
+      --shadow: 0 18px 48px rgba(22, 61, 117, 0.12);
+      --radius-xl: 24px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      color: #333;
       margin: 0;
-      padding: 0;
-      display: block;
       min-height: 100vh;
+      font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 184, 0.14), transparent 30%),
+        radial-gradient(circle at top right, rgba(199, 59, 74, 0.12), transparent 26%),
+        linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
     }
 
-header {
-  background: linear-gradient(135deg, #4a90e2, #357ABD);
-  width: 100%;
-  padding: 30px 20px;
-  text-align: center;
-  color: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(rgba(22, 61, 117, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(22, 61, 117, 0.03) 1px, transparent 1px);
+      background-size: 24px 24px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 90%);
+    }
 
-header img {
-  height: 60px;
-}
+    a {
+      color: var(--blue-deep);
+    }
 
-header h1 {
-  margin: 0;
-  font-size: 2.2em;
-}
+    .page-shell {
+      width: min(100% - 20px, 1120px);
+      margin: 0 auto;
+      padding: 14px 0 28px;
+      position: relative;
+      z-index: 1;
+    }
 
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 10px 28px rgba(22, 61, 117, 0.08);
+    }
 
-    h1 {
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand img {
+      width: 34px;
+      height: 34px;
+      object-fit: contain;
+      flex: 0 0 auto;
+    }
+
+    .eyebrow,
+    .chip,
+    .meta-label {
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.7rem;
+      font-weight: 800;
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-copy h1 {
       margin: 0;
-      font-size: 2em;
+      font-size: 1rem;
+      line-height: 1.05;
     }
 
-    main {
-      width: 100%;
-      max-width: 900px;
-      padding: 40px 20px;
-      text-align: center;
-      background: white;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      margin-left: auto;
-      margin-right: auto;
-      margin-top: 30px;
-      border-radius: 10px;
+    .brand-copy p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.35;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 11px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      border: 1px solid rgba(37, 99, 184, 0.16);
+      color: var(--blue-deep);
+      white-space: nowrap;
+    }
+
+    .chip::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 5px rgba(37, 99, 184, 0.12);
+    }
+
+    .location-stage {
+      display: grid;
+      gap: 14px;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-xl);
+      background: var(--surface);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+
+    .location-panel {
+      padding: 14px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .location-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--blue) 0%, #3f85e0 50%, var(--red) 100%);
+    }
+
+    .location-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+      padding-top: 4px;
+    }
+
+    .location-top .eyebrow {
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    .location-top p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.35;
+    }
+
+    #state-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: var(--red-soft);
+      color: var(--red);
+      font-weight: 800;
+      font-size: 0.76rem;
+      flex: 0 0 auto;
+    }
+
+    #state-badge::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 5px rgba(199, 59, 74, 0.14);
+    }
+
+    .readout {
+      padding: 12px 14px;
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(135deg, rgba(37, 99, 184, 0.08), rgba(255, 255, 255, 0.92) 46%, rgba(199, 59, 74, 0.08));
+      border: 1px solid rgba(37, 99, 184, 0.1);
+      margin-bottom: 10px;
+    }
+
+    .city-label {
+      margin: 0 0 4px;
+      color: var(--muted);
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
     }
 
     #city {
-      font-size: 2em;
-      margin: 20px 0 10px;
-      font-weight: bold;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.75rem, 7vw, 3rem);
+      line-height: 0.92;
+      color: var(--blue-deep);
+      text-wrap: balance;
     }
 
     #address {
-      font-size: 1.1em;
-      margin-bottom: 30px;
-      color: #666;
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.35;
+      min-height: 0;
     }
 
-    iframe {
-      width: 100%;
-      height: 450px;
-      border: none;
-      border-radius: 8px;
+    .spinner-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.8rem;
     }
 
     .spinner {
-      border: 6px solid #eee;
-      border-top: 6px solid #4a90e2;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin: 40px auto;
+      border: 3px solid rgba(37, 99, 184, 0.18);
+      border-top-color: var(--red);
+      animation: spin 0.9s linear infinite;
+    }
+
+    #map-container {
+      position: relative;
+      min-height: 190px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(37, 99, 184, 0.16), rgba(255, 255, 255, 0.5), rgba(199, 59, 74, 0.14)),
+        #d9e7fb;
+      border: 1px solid rgba(37, 99, 184, 0.12);
+    }
+
+    #map-container::before {
+      content: "Map will appear here";
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: rgba(22, 61, 117, 0.55);
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    #map-container.has-map::before {
+      display: none;
+    }
+
+    iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 190px;
+      border: 0;
+    }
+
+    .meta-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .meta-card {
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background: var(--surface-strong);
+      border: 1px solid rgba(37, 99, 184, 0.1);
+    }
+
+    .meta-label {
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .meta-value {
+      font-size: 0.9rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .info-grid {
+      display: grid;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .content-panel {
+      padding: 18px;
+    }
+
+    .content-panel .eyebrow {
+      color: var(--red);
+      margin-bottom: 8px;
+    }
+
+    .content-panel h2,
+    .content-panel h3 {
+      margin: 0 0 10px;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--blue-deep);
+    }
+
+    .content-panel p,
+    .content-panel li {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.95rem;
+    }
+
+    .content-panel ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .stack-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .stack-item {
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      background: rgba(37, 99, 184, 0.05);
+      border: 1px solid rgba(37, 99, 184, 0.1);
+    }
+
+    .stack-item strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text);
+      font-size: 0.94rem;
+    }
+
+    footer {
+      margin-top: 14px;
+      padding: 16px 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--muted);
+      display: grid;
+      gap: 8px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    footer p {
+      margin: 0;
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: fadeUp 0.65s ease forwards;
+    }
+
+    .fade-delay-1 {
+      animation-delay: 0.08s;
+    }
+
+    .fade-delay-2 {
+      animation-delay: 0.16s;
     }
 
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
-    #spinner-container {
-      display: block;
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .description {
-      max-width: 900px;
-      padding: 40px 20px;
-      margin: 30px auto;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      font-size: 1em;
-      line-height: 1.6em;
+    @media (max-width: 420px) {
+      .page-shell {
+        width: min(100% - 14px, 1120px);
+        padding-top: 8px;
+      }
+
+      .topbar {
+        padding: 8px 10px;
+      }
+
+      .brand {
+        gap: 10px;
+      }
+
+      .brand img {
+        width: 28px;
+        height: 28px;
+      }
+
+      .brand-copy .eyebrow,
+      .brand-copy p,
+      .chip,
+      #hero-status-copy {
+        display: none;
+      }
+
+      .location-top {
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .location-top .eyebrow {
+        margin: 0;
+        font-size: 0.66rem;
+      }
+
+      .readout {
+        padding: 10px 12px;
+      }
+
+      #city {
+        font-size: clamp(1.55rem, 6.6vw, 2.3rem);
+      }
+
+      #address {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        overflow: hidden;
+      }
+
+      .meta-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
-    .description h2 {
-      margin-top: 0;
-    }
+    @media (min-width: 760px) {
+      .page-shell {
+        width: min(100% - 32px, 1120px);
+        padding-top: 22px;
+        padding-bottom: 40px;
+      }
 
+      .location-panel,
+      .content-panel {
+        padding: 24px;
+      }
 
-    footer {
-      max-width: 900px;
-      padding: 40px 20px;
-      margin: 30px auto;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      font-size: 1em;
-      line-height: 1.6em;
-    }
+      .location-stage {
+        grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+        align-items: start;
+      }
 
-    footer h2 {
-      margin-top: 0;
+      .info-grid {
+        grid-template-columns: 1.1fr 0.9fr;
+      }
+
+      .topbar {
+        border-radius: 22px;
+        padding: 12px 14px;
+        margin-bottom: 14px;
+      }
+
+      #map-container,
+      iframe {
+        min-height: 280px;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <img src="images/cb_location_logo.png" alt="Where Am I Logo">
-    <h1>Finding your location...</h1>
-  </header>
+  <div class="page-shell">
+    <header class="topbar fade-up">
+      <div class="brand">
+        <img src="images/cb_location_logo.png" alt="Where Am I logo">
+        <div class="brand-copy">
+          <div class="eyebrow">Live location snapshot</div>
+          <h1>Where Am I?</h1>
+          <p>Mobile-first city, address, and map lookup.</p>
+        </div>
+      </div>
+      <div class="chip">No sign-in. No tracking.</div>
+    </header>
 
-  <main>
-    <div id="spinner-container"><div class="spinner"></div></div>
-    <div id="city"></div>
-    <div id="address"></div>
-    <div id="map-container"></div>
-  </main>
-  <section class="description">
-    <h2>What is this?</h2>
-    <p>A lightweight app that uses your device’s location and public APIs to instantly tell you what city you're in.</p>
+    <section class="location-stage">
+      <article class="panel location-panel fade-up fade-delay-1">
+        <div class="location-top">
+          <div>
+            <div class="eyebrow">Current location</div>
+            <p id="hero-status-copy">Waiting for permission to read your location.</p>
+          </div>
+          <div id="state-badge">Requesting location</div>
+        </div>
 
-    <h2>Why build this?</h2>
-    <p>Sometimes I'm driving from point X to Y, and along the way I see something interesting and wonder, "What city am I even in right now?" Navigation apps are great at directions between X and Y, but I've found them less helpful at quickly identifying the exact city I'm currently in while en route, and I wanted to build a simple "push button, get city" tool to satisfy that curiosity. I'm sure other apps do this, but I wanted to try my own solution.</p>
+        <div class="readout">
+          <p class="city-label">City and state</p>
+          <h2 id="city">Locating...</h2>
+          <p id="address">Your approximate address will appear here after a successful lookup.</p>
+          <div id="spinner-container" class="spinner-wrap">
+            <div class="spinner" aria-hidden="true"></div>
+            <span>Finding your current position.</span>
+          </div>
+        </div>
 
-    <h2>What APIs does it use?</h2>
-    <ul>
-      <li>Your device’s GPS for latitude and longitude</li>
-      <li>OpenStreetMap.org for converting coordinates to a readable address</li>
-      <li>Google Maps for displaying maps</li>
-    </ul>
+        <div id="map-container" aria-label="Map panel"></div>
+      </article>
 
-    <h2>What makes it special?</h2>
-    <p>I don't think it is particularly "special", but:</p>
-      <ul>
-        <li>It’s intentionally minimal - just HTML, CSS, and JavaScript.</li>
-        <li>All API calls are free and unauthenticated.</li>
-        <li>We don’t track or store anything. It’s real-time info, on demand.</li>
-      </ul>
+      <aside class="meta-grid fade-up fade-delay-2">
+        <div class="meta-card">
+          <div class="meta-label">Priority</div>
+          <div class="meta-value">City/state first, then address, then map.</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">Source</div>
+          <div class="meta-value">GPS plus OpenStreetMap reverse geocoding.</div>
+        </div>
+        <div class="meta-card">
+          <div class="meta-label">Output</div>
+          <div class="meta-value">Readable text and a visual map without extra steps.</div>
+        </div>
+      </aside>
+    </section>
 
-    <h2>This is a very MVP build, meaning:</h2>
-    <ul>
-      <li>This app relies on location access from your device, and there can be all kinds of reasons your device blocks that access which I'm not interested in troubleshooting for an MVP. If you're on mobile and getting a "Location permission denied" error, one place to start is to ensure you have GPS turned on.</li>
-      <li>Is it loading slow for you? Yeah, it's free APIs patched together. Sometimes it's slow.</li>
-      <li>It hasn't been rigorously tested for browser compatibility. I primarily code against Chrome on both desktop and mobile (Android) for MVP projects, so it should <i>probably</i> work in those environments, but anything else is 50/50.</li>
-      <li>As an MVP project, I don't routinely maintain compatibility updates, even against Chrome. Check the "Last Updated" note in the footer to get a sense of when I think this was last working. If it's been more than a few months, it's entirely possible the ecosystem changed and something is broken.</li>
-      <li>The <a href="https://github.com/evansteiner/whereami" target="_blank">repo</a> for this project is open source and fully available, so feel free to suggest pull requests if you want to suggest an improvement or fix compatibility. I can't guarantee how often I'll review PRs.</li>
-      <li>The code is, admittedly, progressive slop. No apologies for inefficiencies.</li>
-      <li>This is a hobby MVP project with no guarantees of uptime, accuracy, or performance.</li>
-    </ul>
-</section>
+    <section class="info-grid">
+      <article class="panel content-panel fade-up fade-delay-1">
+        <div class="eyebrow">Why this exists</div>
+        <h2>Designed for the moment you need a fast answer while moving.</h2>
+        <p>
+          The app is intentionally narrow: open it on your phone, allow location access, and immediately see the city/state, approximate address, and map without hunting through a larger navigation UI.
+        </p>
+        <div class="stack-list">
+          <div class="stack-item">
+            <strong>Minimal stack</strong>
+            Plain HTML, CSS, and JavaScript with no build step.
+          </div>
+          <div class="stack-item">
+            <strong>Useful output</strong>
+            City/state text is emphasized first because that is the core question the app answers.
+          </div>
+          <div class="stack-item">
+            <strong>Privacy-minded</strong>
+            No account flow and no local storage behavior added here.
+          </div>
+        </div>
+      </article>
 
+      <article class="panel content-panel fade-up fade-delay-2">
+        <div class="eyebrow">MVP notes</div>
+        <h3>What to expect</h3>
+        <ul>
+          <li>Location permission or weak GPS signal can block the lookup.</li>
+          <li>Free services can be slow or intermittently fail.</li>
+          <li>The project is lightweight and not broadly compatibility-tested.</li>
+          <li>Source code lives in the <a href="https://github.com/evansteiner/whereami" target="_blank" rel="noreferrer">GitHub repository</a>.</li>
+        </ul>
+      </article>
+    </section>
+
+    <footer class="fade-up fade-delay-2">
+      <p>&copy; <span id="year"></span>, Evan Steiner</p>
+      <p><span id="last-updated">Last updated: ...</span></p>
+      <p>Contact: <a href="mailto:evan.d.steiner@gmail.com">evan.d.steiner@gmail.com</a></p>
+    </footer>
+  </div>
 
   <script>
+    const cityElement = document.getElementById("city");
+    const addressElement = document.getElementById("address");
+    const headerStatusElement = document.getElementById("hero-status-copy");
+    const stateBadgeElement = document.getElementById("state-badge");
+    const spinnerContainer = document.getElementById("spinner-container");
+    const mapContainer = document.getElementById("map-container");
+
+    function setStatus(state, detail) {
+      stateBadgeElement.textContent = state;
+      headerStatusElement.textContent = detail;
+    }
+
+    function stopLoading() {
+      spinnerContainer.style.display = "none";
+    }
+
     function showError(error) {
-      document.getElementById('spinner-container').style.display = 'none';
-      document.querySelector('header h1').innerText = "Error";
-      const cityDiv = document.getElementById('city');
+      stopLoading();
+      setStatus("Lookup failed", "The app could not resolve your current location.");
+
       switch (error.code) {
         case error.PERMISSION_DENIED:
-          cityDiv.innerText = "Location permission denied.";
+          cityElement.textContent = "Location permission denied";
+          addressElement.textContent = "Allow location access in your browser or device settings, then reload the page.";
           break;
         case error.POSITION_UNAVAILABLE:
-          cityDiv.innerText = "Location unavailable.";
+          cityElement.textContent = "Location unavailable";
+          addressElement.textContent = "Your device could not provide usable coordinates.";
           break;
         case error.TIMEOUT:
-          cityDiv.innerText = "Location request timed out.";
+          cityElement.textContent = "Request timed out";
+          addressElement.textContent = "The location lookup took too long. Try again with a stronger signal.";
           break;
         default:
-          cityDiv.innerText = "An unknown error occurred.";
+          cityElement.textContent = "Unknown error";
+          addressElement.textContent = "An unexpected error occurred while requesting your location.";
           break;
       }
     }
 
+    function formatPlace(addressData) {
+      const city = addressData.city || addressData.town || addressData.village || addressData.municipality || addressData.county || "Unknown location";
+      const state = addressData.state || addressData.region || addressData.state_district || "";
+
+      return state ? `${city}, ${state}` : city;
+    }
+
     function fetchLocationData(latitude, longitude) {
       const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
+      setStatus("Resolving place", "Coordinates acquired. Reverse geocoding your approximate address now.");
 
-      fetch(url, { headers: { 'User-Agent': 'city-finder-app' } })
+      fetch(url, { headers: { "User-Agent": "city-finder-app" } })
         .then(response => response.json())
         .then(data => {
-          const address = data.display_name;
-          const city = data.address.city || data.address.town || data.address.village || data.address.municipality || "Unknown location";
+          const address = data.display_name || "Approximate address unavailable.";
+          const addressData = data.address || {};
 
-          document.querySelector("header h1").innerText = "You're in:";
-          document.getElementById("city").innerText = city;
-          document.getElementById("address").innerText = "Approximate Address: " + address;
+          cityElement.textContent = formatPlace(addressData);
+          addressElement.textContent = `Approximate address: ${address}`;
+          setStatus("Location found", "Current city/state and approximate address resolved successfully.");
 
           const mapIframe = document.createElement("iframe");
           mapIframe.src = `https://maps.google.com/maps?q=${latitude},${longitude}&z=13&output=embed`;
-          document.getElementById("map-container").appendChild(mapIframe);
+          mapIframe.loading = "lazy";
+          mapIframe.referrerPolicy = "no-referrer-when-downgrade";
 
-          document.getElementById("spinner-container").style.display = "none";
+          mapContainer.innerHTML = "";
+          mapContainer.classList.add("has-map");
+          mapContainer.appendChild(mapIframe);
+
+          stopLoading();
         })
         .catch(() => {
-          document.getElementById("spinner-container").style.display = "none";
-          document.querySelector("header h1").innerText = "Error";
-          document.getElementById("city").innerText = "Unable to retrieve location data.";
+          stopLoading();
+          setStatus("Lookup failed", "Coordinates were found, but the address service did not respond cleanly.");
+          cityElement.textContent = "Unable to retrieve location data";
+          addressElement.textContent = "The reverse geocoding request failed before an address could be returned.";
         });
     }
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         position => {
+          setStatus("Reading coordinates", "Permission granted. Pulling your live position from the device.");
           fetchLocationData(position.coords.latitude, position.coords.longitude);
         },
-        showError
+        showError,
+        {
+          enableHighAccuracy: true,
+          timeout: 10000
+        }
       );
     } else {
-      document.getElementById("city").innerText = "Geolocation not supported.";
-      document.getElementById("spinner-container").style.display = "none";
+      stopLoading();
+      setStatus("Unsupported", "This browser does not expose the geolocation API needed by the app.");
+      cityElement.textContent = "Geolocation not supported";
+      addressElement.textContent = "Use a browser or device that supports navigator.geolocation.";
     }
   </script>
 
-    <footer style="font-size: 0.9em; text-align: center; color: #777; padding-bottom: 30px;">
-    <p>&copy; <span id="year"></span>, Evan Steiner</p>
-    <p>
-      Copyright of underlying code subject to terms available at
-      <a href="https://github.com/evansteiner/whereami" target="_blank">github.com/evansteiner/whereami</a>
-    </p>
-
-    <p id="last-updated">Last updated: ...</p>
-
-    <p>Contact: <a href="mailto:evan.d.steiner@gmail.com">evan.d.steiner@gmail.com</a></p>
-  </footer>
-
   <script>
-    // Set current year dynamically
-    document.getElementById('year').textContent = new Date().getFullYear();
+    document.getElementById("year").textContent = new Date().getFullYear();
 
-    // Fetch latest commit date from GitHub
-    fetch('https://api.github.com/repos/evansteiner/whereami/commits')
+    fetch("https://api.github.com/repos/evansteiner/whereami/commits")
       .then(response => response.json())
       .then(data => {
         const lastCommitDate = new Date(data[0].commit.committer.date);
         const formattedDate = lastCommitDate.toLocaleDateString(undefined, {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric'
+          year: "numeric",
+          month: "short",
+          day: "numeric"
         });
-        document.getElementById('last-updated').textContent = `Last updated: ${formattedDate}`;
+        document.getElementById("last-updated").textContent = `Last updated: ${formattedDate}`;
       })
       .catch(error => {
-        console.error('Failed to fetch latest commit:', error);
-        document.getElementById('last-updated').textContent = 'Last updated: unknown';
+        console.error("Failed to fetch latest commit:", error);
+        document.getElementById("last-updated").textContent = "Last updated: unknown";
       });
   </script>
-
 </body>
 </html>
